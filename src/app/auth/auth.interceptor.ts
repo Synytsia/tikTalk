@@ -1,9 +1,9 @@
 import {HttpHandlerFn, HttpInterceptorFn, HttpRequest} from '@angular/common/http'
 import {AuthService} from './auth.service';
 import { inject } from '@angular/core';
-import { catchError, switchMap, throwError } from 'rxjs';
+import {BehaviorSubject, catchError, filter, switchMap, tap, throwError } from 'rxjs';
 
-let isRefreshing = false;
+let isRefreshing$ = new BehaviorSubject<boolean>(false);
 
 export const authTokenInterceptor: HttpInterceptorFn = (request, next) => {
   const authService = inject(AuthService);
@@ -14,7 +14,7 @@ export const authTokenInterceptor: HttpInterceptorFn = (request, next) => {
     return next(request);
   }
 
-  if (isRefreshing) {
+  if (isRefreshing$.value) {
     return refreshAndProceed(authService, request, next);
   }
 
@@ -35,19 +35,33 @@ const refreshAndProceed = (
   request: HttpRequest<any>,
   nextFn: HttpHandlerFn
 ) => {
-  if (!isRefreshing) {
-    isRefreshing = true;
+  if (!isRefreshing$.value) {
+    isRefreshing$.next(true);
 
     return authService.refreshAuthToken()
       .pipe(
         switchMap(tokenResponse => {
-          isRefreshing = false;
-          return nextFn(addToken(request, tokenResponse.access_token))
+          return nextFn(addToken(request, tokenResponse.access_token)).pipe(
+            //рефреш пройшов, поміняли значення
+            tap(() => isRefreshing$.next(false))
+          )
         })
       )
   }
-
-  return nextFn(addToken(request, authService.token!/*перевіряли раніше на null, тому так...*/))
+  //1 варіант - оновився токен, і ми виконали тільки запит me, а інші не оновилися...
+  // return nextFn(addToken(request, authService.token!/*перевіряли раніше на null, тому так...*/))
+  //якщо це рефреш-запит, то оновлюємо токен
+  if (request.url.includes('refresh')) {
+    return nextFn(addToken(request, authService.token!))
+  }
+  //підписалися на рефреш - якщо не пройшов(false, це коли він закінчився), то нічого не робимо, а якщо пройшов, оновлюємо токен
+  return isRefreshing$.pipe(
+    filter(isRefreshing => !isRefreshing),
+    switchMap(res => {
+      //відускає запроси які тримав
+      return nextFn(addToken(request, authService.token!))
+    })
+  )
 }
 
 const addToken = (request: HttpRequest<any>, token: string)=> {

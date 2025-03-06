@@ -2,12 +2,13 @@ import { Component } from '@angular/core';
 import {ProfileCardComponent} from '../../common-ui/profile-card/profile-card.component';
 import {inject} from '@angular/core';
 import {ProfileService} from '../../data/services/profile.service';
-import {Profile} from '../../data/interfaces/profile.interface';
+import {ProfileFiltersComponent} from './profile-filters/profile-filters.component';
 
 @Component({
   selector: 'app-search-page',
   imports: [
-    ProfileCardComponent
+    ProfileCardComponent,
+    ProfileFiltersComponent,
   ],
   templateUrl: './search-page.component.html',
   styleUrl: './search-page.component.scss'
@@ -15,12 +16,28 @@ import {Profile} from '../../data/interfaces/profile.interface';
 export class SearchPageComponent {
   title = 'angular_tik_talk';
   profileService = inject(ProfileService);
-  profiles: Profile[] = [];
+  profiles = this.profileService.filteredProfiles;
 
-  constructor() {
-    this.profileService.getTestAccounts()
-      .subscribe(value => {
-        this.profiles = value;
-      })
-  }
+  //ТЕСТОВІ КОРИСТУВАЧІ:
+  /* 1)старий спосіб
+  // profiles: Profile[] = [];
+
+  // constructor() {
+  //   this.profileService.getTestAccounts()
+  //     .subscribe(value => {
+  //       this.profiles = value;
+  //     })
+  // }*/
+  // @for (profile of profiles; track profile.id) {
+  //   <app-profile-card [profile]="profile"></app-profile-card>
+  // }
+
+
+  // 2) з AsyncPipe і стрімом
+  // profiles$ = this.profileService.getTestAccounts();
+  // @for (profile of profiles$ | async; track profile.id) {
+  //   <app-profile-card [profile]="profile"></app-profile-card>
+  // }
+
+
 }

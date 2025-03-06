@@ -1,0 +1,94 @@
+:host {
+  display: block;
+  padding: 20px 12px;
+  position: relative;
+  background: var(--dark-color);
+}
+
+.main-menu-list {
+  display: grid;
+  grid-gap: 8px;
+  list-style: none;
+}
+
+.menu-item {
+  padding: 16px 12px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: var(--light-color);
+  display: grid;
+  grid-template-columns: 16px 1fr max-content;
+  grid-gap: 12px;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 24px;
+  text-align: left;
+  width: 100%;
+  border-radius: 2px;
+  text-decoration: none;
+
+  &.active,
+  &:hover,
+  &:focus-visible {
+    background: var(--dark-hover-color);
+    color: var(--primary-color);
+
+    .menu-item svg {
+      color: var(--primary-color);
+    }
+  }
+}
+
+/*так неправильно - звертаємося через класи(але є така можливість по тегах)*/
+.menu-item svg {
+  width: 16px;
+  height: 16px;
+}
+
+.to-subscribers {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.to-subscribers-link {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.to-subscribers-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/*так неправильно - звертаємося через класи(але є така можливість по тегах)*/
+.sidebar__footer {
+  position: absolute;
+  width: calc(100% - 20px);
+  bottom: 20px;
+  background: var(--dark-hover-color);
+  border-radius: 2px;
+  padding: 4px 16px;
+  display: grid;
+  grid-template-columns: 32px 1fr 16px;
+  grid-gap: 12px;
+  align-items: center;
+  img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+  }
+}
+
+.username-text {
+  color: var(--primary-color);
+  font-weight: 700;
+}
+
+.to-settings-icon-sidebar {
+  width: 13px;
+  height: 13px;
+  color: var(--primary-color);
+}

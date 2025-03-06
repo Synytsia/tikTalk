@@ -1,2 +1,74 @@
-<p>sidebar works!</p>
+<img
+  src="/assets/svg/logo-small.svg"
+  alt=""
+  class="ml16 mb20"
+>
 
+<nav class="mb20">
+  <ul  class="main-menu-list">
+    <!--    angular 17-->
+<!--    /*@for (menuItem of menuItems; track menuItem.label) {-->
+<!--    <li>-->
+<!--      <button-->
+<!--        class="menu-item">-->
+<!--&lt;!&ndash;        <svg icon="{{ menuItem.icon }}"></svg>&ndash;&gt;-->
+<!--        <svg [icon]="menuItem.icon"></svg>-->
+
+<!--        <span>{{ menuItem.label }}</span>-->
+<!--      </button>-->
+<!--    </li>-->
+<!--    }*/-->
+
+    <!--    angular 14-->
+    <li *ngFor="let menuItem of menuItems">
+      <a [routerLink]="[menuItem.link]"
+         routerLinkActive="active"
+        class="menu-item">
+        <svg [icon]="menuItem.icon"></svg>
+
+        <span>{{ menuItem.label }}</span>
+      </a>
+    </li>
+
+  </ul>
+</nav>
+
+<p class="medium-text mb20">Підписники</p>
+
+@for (subscribersProfile of subscribers$ | async; track subscribersProfile.id) {
+  <app-subscriber-card
+    [profile]="subscribersProfile"
+  ></app-subscriber-card>
+}
+
+<div class="to-subscribers mt20">
+  <a
+    [routerLink]="['/subscribers']"
+    class="to-subscribers-link medium-text">Всі підписники</a>
+  <svg icon="arrow" class="to-subscribers-icon"></svg>
+</div>
+
+<footer class="sidebar__footer">
+  @if (me(); as me) {
+    @if (me.avatarUrl) {
+      <img
+        [src]="me.avatarUrl | imgUrl"
+        alt=""
+      >
+    } @else {
+      <img
+        src="/assets/images/test_user_ws.png"
+        alt=""
+      >
+    }
+
+    <div class="medium-text username-text">{{ me.username }}</div>
+
+    <a
+      [routerLink]="['settings']"
+      class="settings-btn"
+    >
+      <svg icon="settings"  class="to-settings-icon-sidebar"></svg>
+    </a>
+  }
+</footer>

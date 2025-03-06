@@ -14,6 +14,7 @@ export class AuthService {
   router = inject(Router)
   baseApiUrl = 'https://icherniakov.ru/yt-course/auth/';
 
+  //5хв - час життя токену на сервері
   token: string | null = null;
   refreshToken: string | null = null;
 
